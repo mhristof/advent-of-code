@@ -2,28 +2,40 @@ package main
 
 import (
 	"bufio"
-	"fmt"
-	"os"
+	"io"
+	"math"
+	"strconv"
+	"strings"
 )
 
 func main() {
-	file, err := os.Open("input1")
-	if err != nil {
-		panic(err)
-	}
-
-	one(bufio.NewReader(file))
 }
 
-func one(in *bufio.Reader) int {
+func one(in *bufio.Reader) (ret int) {
+	old := math.MaxUint32
+
 	for {
 		line, err := in.ReadString('\n')
+		if line == "" || (err != nil && err != io.EOF) {
+			return ret
+		}
+		eof := err == io.EOF
+
+		number, err := strconv.Atoi(strings.TrimSuffix(line, "\n"))
 		if err != nil {
-			return 0
+			panic(err)
 		}
 
-		fmt.Println(fmt.Sprintf("line: %+v", line))
-	}
+		if number > old {
+			ret++
+		}
 
-	return 0
+		if eof {
+			return ret
+		}
+
+		//fmt.Println("old:", old, "number", number, "ret", ret)
+
+		old = number
+	}
 }
